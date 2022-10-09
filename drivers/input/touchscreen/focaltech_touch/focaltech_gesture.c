@@ -245,6 +245,19 @@ static ssize_t fts_gesture_single_tap_pressed_show(
     return snprintf(buf, PAGE_SIZE, "%u\n", single_tap_pressed);
 }
 
+static ssize_t fts_gesture_fod_pressed_show(
+    struct device *dev, struct device_attribute *attr, char *buf)
+{
+    int fp_down = 0;
+    struct fts_ts_data *ts_data = dev_get_drvdata(dev);
+
+    mutex_lock(&ts_data->input_dev->mutex);
+    fp_down = ts_data->fod_info.fp_down_report;
+    mutex_unlock(&ts_data->input_dev->mutex);
+
+    return snprintf(buf, PAGE_SIZE, "%u\n", fp_down);
+}
+
 /* sysfs gesture node
  *   read example: cat  fts_gesture_mode       ---read gesture mode
  *   write example:echo 1 > fts_gesture_mode   --- write gesture mode to 1
@@ -266,12 +279,16 @@ static DEVICE_ATTR(fts_gesture_point, S_IRUGO | S_IWUSR,
 static DEVICE_ATTR(fts_gesture_single_tap_pressed, S_IRUGO,
                    fts_gesture_single_tap_pressed_show, NULL);
 
+static DEVICE_ATTR(fts_gesture_fod_pressed, S_IRUGO,
+                   fts_gesture_fod_pressed_show, NULL);
+
 static struct attribute *fts_gesture_mode_attrs[] = {
 	&dev_attr_fts_gesture_mode.attr,
 	&dev_attr_fts_gesture_buf.attr,
 	&dev_attr_fts_gesture_bm.attr,
 	&dev_attr_fts_gesture_point.attr,
 	&dev_attr_fts_gesture_single_tap_pressed.attr,
+	&dev_attr_fts_gesture_fod_pressed.attr,
 	NULL,
 };
 
@@ -300,6 +317,7 @@ void fts_fod_report_key(struct fts_ts_data *ts_data)
 	memset(&coordinate, 0, sizeof(coordinate));
 	if ((ts_data->fod_info.fp_down) && (!ts_data->fod_info.fp_down_report)) {
 		ts_data->fod_info.fp_down_report = 1;
+		sysfs_notify(&ts_data->dev->kobj, NULL, "fts_gesture_fod_pressed");
 		input_report_key(ts_data->input_dev, KEY_GESTURE_FOD, 1);
 		input_sync(ts_data->input_dev);
 		FTS_DEBUG("KEY_GESTURE_FOD, 1");
@@ -309,6 +327,7 @@ void fts_fod_report_key(struct fts_ts_data *ts_data)
 	}
 	else if ((!ts_data->fod_info.fp_down) && (ts_data->fod_info.fp_down_report)) {
 		ts_data->fod_info.fp_down_report = 0;
+		sysfs_notify(&ts_data->dev->kobj, NULL, "fts_gesture_fod_pressed");
 		input_report_key(ts_data->input_dev, KEY_GESTURE_FOD, 0);
 		input_sync(ts_data->input_dev);
 		FTS_DEBUG("KEY_GESTURE_FOD, 0");
