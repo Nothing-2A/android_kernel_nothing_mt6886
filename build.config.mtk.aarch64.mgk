@@ -47,11 +47,8 @@ vendor/mediatek/kernel_modules/connectivity/gps/gps_pwr
 vendor/mediatek/kernel_modules/connectivity/gps/gps_scp
 vendor/mediatek/kernel_modules/connectivity/wlan/adaptor
 vendor/mediatek/kernel_modules/connectivity/wlan/core/gen4m
-vendor/mediatek/kernel_modules/fpsgo_cus
-vendor/mediatek/kernel_modules/hbt_driver_cus
 vendor/mediatek/kernel_modules/gpu
 vendor/mediatek/kernel_modules/met_drv_v3
-vendor/mediatek/kernel_modules/msync2_frd_cus
 "
 
 TARGET_BUILD_VARIANT=user
