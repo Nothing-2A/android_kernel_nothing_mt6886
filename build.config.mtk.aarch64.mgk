@@ -1,0 +1,66 @@
+KERNEL_DIR=kernel-5.15
+
+. ${ROOT_DIR}/${KERNEL_DIR}/build.config.common
+. ${ROOT_DIR}/${KERNEL_DIR}/build.config.lto_thin
+. ${ROOT_DIR}/${KERNEL_DIR}/build.config.aarch64
+
+DEFCONFIG=mgk_64_k515_gki_defconfig
+FRAGMENT_CONFIG=${KERNEL_DIR}/arch/arm64/configs/mgk_64_k515_defconfig
+PRE_DEFCONFIG_CMDS="KCONFIG_CONFIG=${ROOT_DIR}/${KERNEL_DIR}/arch/arm64/configs/${DEFCONFIG} ${ROOT_DIR}/${KERNEL_DIR}/scripts/kconfig/merge_config.sh -m -r ${ROOT_DIR}/${KERNEL_DIR}/arch/arm64/configs/gki_defconfig ${ROOT_DIR}/${FRAGMENT_CONFIG}"
+POST_DEFCONFIG_CMDS="rm ${ROOT_DIR}/${KERNEL_DIR}/arch/arm64/configs/${DEFCONFIG}"
+INSTALL_MOD_STRIP=1
+
+DTC='${OUT_DIR}/scripts/dtc/dtc'
+
+MAKE_GOALS="${MAKE_GOALS}
+Image.gz
+mediatek/mt6886.dtb
+mediatek/k6886v1_64.dtbo
+mediatek/k6886v1_64_1.dtbo
+mediatek/k6886v1_64_2.dtbo
+"
+
+FILES="${FILES}
+arch/arm64/boot/Image.gz
+arch/arm64/boot/dts/mediatek/mt6886.dtb
+arch/arm64/boot/dts/mediatek/k6886v1_64.dtbo
+arch/arm64/boot/dts/mediatek/k6886v1_64_1.dtbo
+arch/arm64/boot/dts/mediatek/k6886v1_64_2.dtbo
+"
+
+ABI_OUT_TAG="mtk"
+KMI_SYMBOL_LIST=android/abi_gki_aarch64_mtk
+GKI_MODULES_LIST=android/gki_aarch64_modules
+ABI_DEFINITION=android/abi_gki_aarch64.xml
+
+EXT_MODULES+="
+vendor/mediatek/kernel_modules/connectivity/common
+vendor/mediatek/kernel_modules/connectivity/connfem
+vendor/mediatek/kernel_modules/connectivity/conninfra
+vendor/mediatek/kernel_modules/connectivity/bt/mt66xx/btif
+vendor/mediatek/kernel_modules/connectivity/fmradio
+vendor/mediatek/kernel_modules/connectivity/gps/data_link/plat/v051
+vendor/mediatek/kernel_modules/connectivity/gps/gps_pwr
+vendor/mediatek/kernel_modules/connectivity/gps/gps_scp
+vendor/mediatek/kernel_modules/connectivity/wlan/adaptor
+vendor/mediatek/kernel_modules/connectivity/wlan/core/gen4m
+vendor/mediatek/kernel_modules/fpsgo_cus
+vendor/mediatek/kernel_modules/hbt_driver_cus
+vendor/mediatek/kernel_modules/gpu
+vendor/mediatek/kernel_modules/met_drv_v3
+vendor/mediatek/kernel_modules/msync2_frd_cus
+"
+
+TARGET_BUILD_VARIANT=user
+
+BT_PLATFORM=6886
+LOG_TAG=[BT_Drv][btif]
+
+CONFIG_MTK_COMBO_WIFI_HIF=axi
+CONNAC_VER=2_0
+MTK_ANDROID_EMI=y
+MTK_ANDROID_WMT=y
+MTK_COMBO_CHIP=CONNAC2X2_SOC7_0
+MTK_WLAN_SERVICE=yes
+WIFI_IP_SET=1
+WLAN_CHIP_ID=6886
