@@ -5,8 +5,11 @@ KERNEL_DIR=kernel-5.15
 . ${ROOT_DIR}/${KERNEL_DIR}/build.config.aarch64
 
 DEFCONFIG=mgk_64_k515_gki_defconfig
-FRAGMENT_CONFIG=${KERNEL_DIR}/arch/arm64/configs/mgk_64_k515_defconfig
-PRE_DEFCONFIG_CMDS="KCONFIG_CONFIG=${ROOT_DIR}/${KERNEL_DIR}/arch/arm64/configs/${DEFCONFIG} ${ROOT_DIR}/${KERNEL_DIR}/scripts/kconfig/merge_config.sh -m -r ${ROOT_DIR}/${KERNEL_DIR}/arch/arm64/configs/gki_defconfig ${ROOT_DIR}/${FRAGMENT_CONFIG}"
+FRAGMENTS_CONFIG="
+${ROOT_DIR}/${KERNEL_DIR}/arch/arm64/configs/mgk_64_k515_defconfig
+${ROOT_DIR}/${KERNEL_DIR}/arch/arm64/configs/lineage.config
+"
+PRE_DEFCONFIG_CMDS="KCONFIG_CONFIG=${ROOT_DIR}/${KERNEL_DIR}/arch/arm64/configs/${DEFCONFIG} ${ROOT_DIR}/${KERNEL_DIR}/scripts/kconfig/merge_config.sh -m -r ${ROOT_DIR}/${KERNEL_DIR}/arch/arm64/configs/gki_defconfig ${FRAGMENTS_CONFIG}"
 POST_DEFCONFIG_CMDS="rm ${ROOT_DIR}/${KERNEL_DIR}/arch/arm64/configs/${DEFCONFIG}"
 INSTALL_MOD_STRIP=1
 
