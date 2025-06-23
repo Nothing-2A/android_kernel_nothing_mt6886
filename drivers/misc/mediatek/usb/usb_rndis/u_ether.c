@@ -1048,8 +1048,10 @@ static void eth_start(struct eth_dev *dev, gfp_t gfp_flags)
 {
 	U_ETHER_DBG("\n");
 
+#if IS_ENABLED(CONFIG_MTK_NET_RPS)
 	pr_info("%s - queue_work set_rps_map\n", __func__);
 	queue_work(uether_rps_wq, &dev->rps_map_work);
+#endif
 
 	/* fill the rx queue */
 	rx_fill(dev, gfp_flags);
@@ -1160,6 +1162,7 @@ static int get_ether_addr_str(u8 dev_addr[ETH_ALEN], char *str, int len)
 	return 18;
 }
 
+#if IS_ENABLED(CONFIG_MTK_NET_RPS)
 static void set_rps_map_work(struct work_struct *work)
 {
 	struct eth_dev	*dev = container_of(work, struct eth_dev, rps_map_work);
@@ -1170,6 +1173,7 @@ static void set_rps_map_work(struct work_struct *work)
 	pr_info("%s - set rps to 0xff\n", __func__);
 	set_rps_map(dev->net->_rx, 0xff);
 }
+#endif
 
 static const struct net_device_ops eth_netdev_ops = {
 	.ndo_open		= eth_open,
@@ -1218,7 +1222,9 @@ struct eth_dev *mtk_gether_setup_name(struct usb_gadget *g,
 	INIT_WORK(&dev->work, eth_work);
 	INIT_WORK(&dev->rx_work, process_rx_w);
 	INIT_WORK(&dev->rx_work1, process_rx_w1);
+#if IS_ENABLED(CONFIG_MTK_NET_RPS)
 	INIT_WORK(&dev->rps_map_work, set_rps_map_work);
+#endif
 	INIT_LIST_HEAD(&dev->tx_reqs);
 	INIT_LIST_HEAD(&dev->rx_reqs);
 
@@ -1287,7 +1293,9 @@ struct net_device *mtk_gether_setup_name_default(const char *netname)
 	INIT_WORK(&dev->work, eth_work);
 	INIT_WORK(&dev->rx_work, process_rx_w);
 	INIT_WORK(&dev->rx_work1, process_rx_w1);
+#if IS_ENABLED(CONFIG_MTK_NET_RPS)
 	INIT_WORK(&dev->rps_map_work, set_rps_map_work);
+#endif
 	INIT_LIST_HEAD(&dev->tx_reqs);
 	INIT_LIST_HEAD(&dev->rx_reqs);
 
