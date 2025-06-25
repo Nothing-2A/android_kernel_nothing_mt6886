@@ -773,20 +773,18 @@ static int battery_psy_get_property(struct power_supply *psy,
 			POWER_SUPPLY_CAPACITY_LEVEL_UNKNOWN)
 			val->intval = 0;
 		else {
-			int q_max_mah = 0;
-			int q_max_uah = 0;
+			int health_percent_per_mil = 0;
+			int q_max_design_mah = 0;
+			int q_max_estimated_uah = 0;
 
-			q_max_mah =
+			health_percent_per_mil = 100000 - (gm->bat_cycle * 50);  // 100.000% - 0.05% per cycle for Li-Ion battery
+
+			q_max_design_mah =
 				gm->fg_table_cust_data.fg_profile[
 				gm->battery_id].q_max;
 
-			q_max_uah = q_max_mah * 1000;
-			if (q_max_uah <= 100000) {
-				bm_debug("%s q_max_mah:%d q_max_uah:%d\n",
-					__func__, q_max_mah, q_max_uah);
-				q_max_uah = 100001;
-			}
-			val->intval = q_max_uah;
+			q_max_estimated_uah = (q_max_design_mah * health_percent_per_mil) / 100;
+			val->intval = q_max_estimated_uah;
 		}
 		break;
 	case POWER_SUPPLY_PROP_CONSTANT_CHARGE_VOLTAGE:
