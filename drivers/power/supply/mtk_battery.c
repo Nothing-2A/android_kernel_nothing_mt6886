@@ -694,9 +694,23 @@ static int battery_psy_get_property(struct power_supply *psy,
 		ret = 0;
 		break;
 	case POWER_SUPPLY_PROP_CHARGE_FULL:
-		val->intval =
-			gm->fg_table_cust_data.fg_profile[
-				gm->battery_id].q_max * 1000;
+		if (check_cap_level(bs_data->bat_capacity) ==
+			POWER_SUPPLY_CAPACITY_LEVEL_UNKNOWN)
+			val->intval = 0;
+		else {
+			int health_percent_per_mil = 0;
+			int q_max_design_mah = 0;
+			int q_max_estimated_uah = 0;
+
+			health_percent_per_mil = 100000 - (gm->bat_cycle * 50);  // 100.000% - 0.05% per cycle for Li-Ion battery
+
+			q_max_design_mah =
+				gm->fg_table_cust_data.fg_profile[
+				gm->battery_id].q_max;
+
+			q_max_estimated_uah = (q_max_design_mah * health_percent_per_mil) / 100;
+			val->intval = q_max_estimated_uah;
+		}
 		break;
 	case POWER_SUPPLY_PROP_CHARGE_COUNTER:
 		val->intval = gm->ui_soc *
@@ -769,23 +783,9 @@ static int battery_psy_get_property(struct power_supply *psy,
 		ret = 0;
 		break;
 	case POWER_SUPPLY_PROP_CHARGE_FULL_DESIGN:
-		if (check_cap_level(bs_data->bat_capacity) ==
-			POWER_SUPPLY_CAPACITY_LEVEL_UNKNOWN)
-			val->intval = 0;
-		else {
-			int health_percent_per_mil = 0;
-			int q_max_design_mah = 0;
-			int q_max_estimated_uah = 0;
-
-			health_percent_per_mil = 100000 - (gm->bat_cycle * 50);  // 100.000% - 0.05% per cycle for Li-Ion battery
-
-			q_max_design_mah =
-				gm->fg_table_cust_data.fg_profile[
-				gm->battery_id].q_max;
-
-			q_max_estimated_uah = (q_max_design_mah * health_percent_per_mil) / 100;
-			val->intval = q_max_estimated_uah;
-		}
+		val->intval =
+			gm->fg_table_cust_data.fg_profile[
+				gm->battery_id].q_max * 1000;
 		break;
 	case POWER_SUPPLY_PROP_CONSTANT_CHARGE_VOLTAGE:
 		bs_data = &gm->bs_data;
