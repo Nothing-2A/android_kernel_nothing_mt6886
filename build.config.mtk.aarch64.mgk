@@ -4,6 +4,7 @@ KERNEL_DIR=kernel-5.15
 . ${ROOT_DIR}/${KERNEL_DIR}/build.config.lto_thin
 . ${ROOT_DIR}/${KERNEL_DIR}/build.config.aarch64
 
+# SKIP_MRPROPER=1
 DEFCONFIG=mgk_64_k515_gki_defconfig
 FRAGMENTS_CONFIG="
 ${ROOT_DIR}/${KERNEL_DIR}/arch/arm64/configs/mgk_64_k515_defconfig
@@ -16,7 +17,7 @@ INSTALL_MOD_STRIP=1
 DTC='${OUT_DIR}/scripts/dtc/dtc'
 
 MAKE_GOALS="${MAKE_GOALS}
-Image.gz
+Image.lz4
 mediatek/mt6886.dtb
 mediatek/k6886v1_64.dtbo
 mediatek/k6886v1_64_1.dtbo
@@ -24,7 +25,7 @@ mediatek/k6886v1_64_2.dtbo
 "
 
 FILES="${FILES}
-arch/arm64/boot/Image.gz
+arch/arm64/boot/Image.lz4
 arch/arm64/boot/dts/mediatek/mt6886.dtb
 arch/arm64/boot/dts/mediatek/k6886v1_64.dtbo
 arch/arm64/boot/dts/mediatek/k6886v1_64_1.dtbo
