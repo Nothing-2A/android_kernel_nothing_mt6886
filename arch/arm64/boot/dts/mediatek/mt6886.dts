@@ -98,7 +98,7 @@
 	chosen: chosen {
 		bootargs = "console=tty0 root=/dev/ram \
 			    rcupdate.rcu_expedited=1 \
-			    loglevel=8 disable_dma32=on \
+			    loglevel=0 disable_dma32=on \
 			    8250.nr_uarts=2 \
 			    androidboot.hardware=mt6886 \
 			    initcall_debug=1 cgroup.memory=nokmem \
