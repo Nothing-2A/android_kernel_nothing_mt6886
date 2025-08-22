@@ -101,7 +101,7 @@
 			    loglevel=0 disable_dma32=on \
 			    8250.nr_uarts=2 \
 			    androidboot.hardware=mt6886 \
-			    initcall_debug=1 cgroup.memory=nokmem \
+			    cgroup.memory=nokmem \
 			    vdmalloc=400M swiotlb=noforce transparent_hugepage=never \
 			    printk.devkmsg=on \
 			    firmware_class.path=/vendor/firmware";
