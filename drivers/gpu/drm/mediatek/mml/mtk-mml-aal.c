@@ -1427,9 +1427,11 @@ static void aal_task_done_readback(struct mml_comp *comp, struct mml_task *task,
 			if (!aal_hist_check(comp, task, ccfg,
 				&(task->pq_task->aal_hist[pipe]->va[offset]))) {
 				mml_pq_err("%s hist error", __func__);
+#if IS_ENABLED(CONFIG_MTK_AEE_FEATURE)
 				mml_pq_util_aee("MML_PQ_AAL_Histogram Error",
 					"AAL Histogram error need to check jobid:%d",
 					task->job.jobid);
+#endif
 			}
 		}
 	}

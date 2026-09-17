@@ -337,8 +337,10 @@ static void apu_coredump_work_func(struct work_struct *p_work)
 		apu_regdump();
 		/* since exception is triggered, so bypass power off timeout check */
 		apu->bypass_pwr_off_chk = true;
+#if IS_ENABLED(CONFIG_MTK_AEE_FEATURE)
 		apusys_rv_exception_aee_warn(
 			apusys_assert_module_name[apu->conf_buf->ramdump_module]);
+#endif
 
 		if ((apu->platdata->flags & F_EXCEPTION_KE) && !apu->disable_ke &&
 			(ktime_get() / 1000000) > BOOT_BYPASS_APU_KE_MS) {
@@ -505,7 +507,9 @@ static void apu_coredump_work_func(struct work_struct *p_work)
 			(apu->platdata->flags & F_EXCEPTION_KE) ? "":"F_EXCEPTION_KE not enabled",
 			!apu->disable_ke ? "":"disabled by cmd");
 
+#if IS_ENABLED(CONFIG_MTK_AEE_FEATURE)
 		apusys_rv_aee_warn("APUSYS_RV", "APUSYS_RV_TIMEOUT");
+#endif
 	}
 
 	dev_info(dev, "%s -\n", __func__);

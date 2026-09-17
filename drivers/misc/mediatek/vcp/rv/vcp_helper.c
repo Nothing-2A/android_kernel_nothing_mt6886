@@ -648,7 +648,9 @@ static void vcp_wait_ready_timeout(struct timer_list *t)
 #endif
 	vcp_timeout_times++;
 	pr_notice("[VCP] vcp_timeout_times=%x\n", vcp_timeout_times);
+#if IS_ENABLED(CONFIG_MTK_AEE_FEATURE)
 	vcp_dump_last_regs(mmup_enable_count());
+#endif
 }
 #endif
 
@@ -730,7 +732,9 @@ void trigger_vcp_halt(enum vcp_core_id id)
 	}
 
 	if (mmup_enable_count() && vcp_ready[id]) {
+#if IS_ENABLED(CONFIG_MTK_AEE_FEATURE)
 		vcp_dump_last_regs(mmup_enable_count());
+#endif
 
 		/* trigger halt isr, force vcp enter wfi */
 		pr_notice("[VCP] %s VCP EE coredump...\n", __func__);
@@ -830,7 +834,9 @@ uint32_t vcp_wait_ready_sync(enum feature_id id)
 		i += 5;
 		mdelay(5);
 		if (i > VCP_SYNC_TIMEOUT_MS) {
+#if IS_ENABLED(CONFIG_MTK_AEE_FEATURE)
 			vcp_dump_last_regs(1);
+#endif
 			for (j = 0; j < NUM_FEATURE_ID; j++)
 				if (feature_table[j].enable)
 					pr_info("[VCP] Active feature id %d cnt %d\n",
@@ -1232,7 +1238,9 @@ static inline ssize_t vcp_A_reg_status_show(struct device *kobj
 {
 	int len = 0;
 
+#if IS_ENABLED(CONFIG_MTK_AEE_FEATURE)
 	vcp_dump_last_regs(mmup_enable_count());
+#endif
 	len += scnprintf(buf + len, PAGE_SIZE - len,
 		"c0_status = %08x\n", c0_m->status);
 	len += scnprintf(buf + len, PAGE_SIZE - len,
@@ -1309,7 +1317,9 @@ static inline ssize_t vcp_A_db_test_store(struct device *kobj
 
 	if (kstrtouint(buf, 10, &value) == 0) {
 		if (value == 666) {
+#if IS_ENABLED(CONFIG_MTK_AEE_FEATURE)
 			vcp_aed(RESET_TYPE_CMD, VCP_A_ID);
+#endif
 			if (vcp_ready[VCP_A_ID])
 				pr_debug("dumping VCP db\n");
 			else
@@ -2132,12 +2142,14 @@ void vcp_sys_reset_ws(struct work_struct *ws)
 	__pm_stay_awake(vcp_reset_lock);
 
 	/*workqueue for vcp ee, vcp reset by cmd will not trigger vcp ee*/
+#if IS_ENABLED(CONFIG_MTK_AEE_FEATURE)
 	if (vcp_reset_by_cmd == 0 && vcp_ee_enable) {
 		vcp_aed(vcp_reset_type, VCP_A_ID);
 		/* vcp_aee_print("[VCP] %s(): vcp_reset_type %d remain %x times, encnt %d\n",
 		 *	__func__, vcp_reset_type, vcp_reset_counts, mmup_enable_count());
 		 */
 	}
+#endif
 	pr_debug("[VCP] %s(): disable logger\n", __func__);
 	/* logger disable must after vcp_aed() */
 	vcp_logger_init_set(0);

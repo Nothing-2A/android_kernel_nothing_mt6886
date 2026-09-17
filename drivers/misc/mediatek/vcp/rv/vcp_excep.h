@@ -10,7 +10,9 @@
 #include "vcp_helper.h"
 #include "vcp_ipi_pin.h"
 
+#if IS_ENABLED(CONFIG_MTK_AEE_FEATURE)
 #define AED_LOG_PRINT_SIZE	SZ_16K
+#endif
 #define VCP_LOCK_OFS	0xE0
 #define VCP_TCM_LOCK_BIT	(1 << 20)
 
@@ -31,16 +33,20 @@ struct vcp_status_reg {
 	uint32_t sp_latch;
 };
 
+#if IS_ENABLED(CONFIG_MTK_AEE_FEATURE)
 extern void vcp_dump_last_regs(int mmup_enable);
 extern void vcp_aed(enum VCP_RESET_TYPE type, enum vcp_core_id id);
 extern void vcp_aed_reset(enum vcp_excep_id type, enum vcp_core_id id);
 extern void vcp_aed_reset_inplace(enum vcp_excep_id type,
 		enum vcp_core_id id);
+#endif
 extern void vcp_get_log(enum vcp_core_id id);
 extern char *vcp_pickup_log_for_aee(void);
+#if IS_ENABLED(CONFIG_MTK_AEE_FEATURE)
 extern void aed_vcp_exception_api(const int *log, int log_size,
 		const int *phy, int phy_size, const char *detail,
 		const int db_opt);
+#endif
 extern void vcp_excep_cleanup(void);
 extern uint32_t vcp_dump_size_probe(struct platform_device *pdev);
 enum { r0, r1, r2, r3, r12, lr, pc, psr};

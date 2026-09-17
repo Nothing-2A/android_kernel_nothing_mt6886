@@ -10,7 +10,9 @@
 #include "scp_helper.h"
 #include "scp_ipi_pin.h"
 
+#if IS_ENABLED(CONFIG_MTK_AEE_FEATURE)
 #define AED_LOG_PRINT_SIZE	SZ_16K
+#endif
 #define SCP_LOCK_OFS	0xE0
 #define SCP_TCM_LOCK_BIT	(1 << 20)
 #define SCP_COREDUMP_TIMEOUT_MS (3 * 60 * 1000)  /* 3min */
@@ -32,6 +34,7 @@ struct scp_status_reg {
 	uint32_t sp_latch;
 };
 
+#if IS_ENABLED(CONFIG_MTK_AEE_FEATURE)
 extern void scp_dump_last_regs(void);
 extern void scp_dump_bus_tracker_status(void);
 extern void scp_show_last_regs(void);
@@ -40,11 +43,14 @@ extern void scp_aed(enum SCP_RESET_TYPE type, enum scp_core_id id);
 extern void scp_aed_reset(enum scp_excep_id type, enum scp_core_id id);
 extern void scp_aed_reset_inplace(enum scp_excep_id type,
 		enum scp_core_id id);
+#endif
 extern void scp_get_log(enum scp_core_id id);
 extern char *scp_pickup_log_for_aee(void);
+#if IS_ENABLED(CONFIG_MTK_AEE_FEATURE)
 extern void aed_scp_exception_api(const int *log, int log_size,
 		const int *phy, int phy_size, const char *detail,
 		const int db_opt);
+#endif
 extern void scp_excep_cleanup(void);
 extern uint32_t memorydump_size_probe(struct platform_device *pdev);
 enum { r0, r1, r2, r3, r12, lr, pc, psr};

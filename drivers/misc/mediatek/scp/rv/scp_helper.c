@@ -919,8 +919,10 @@ static inline ssize_t scp_A_reg_status_show(struct device *kobj
 {
 	int len = 0;
 
+#if IS_ENABLED(CONFIG_MTK_AEE_FEATURE)
 	scp_dump_last_regs();
 	scp_show_last_regs();
+#endif
 	len += scnprintf(buf + len, PAGE_SIZE - len,
 		"c0h0_status = %08x\n", c0_m->status);
 	len += scnprintf(buf + len, PAGE_SIZE - len,
@@ -997,7 +999,9 @@ static inline ssize_t scp_A_db_test_store(struct device *kobj
 
 	if (kstrtouint(buf, 10, &value) == 0) {
 		if (value == 666) {
+#if IS_ENABLED(CONFIG_MTK_AEE_FEATURE)
 			scp_aed(RESET_TYPE_CMD, SCP_A_ID);
+#endif
 			if (scp_ready[SCP_A_ID])
 				pr_debug("dumping SCP db\n");
 			else
@@ -1892,8 +1896,10 @@ void scp_sys_reset_ws(struct work_struct *ws)
 	/*notify scp functions stop*/
 	pr_notice("[SCP] %s(): scp_extern_notify\n", __func__);
 	scp_extern_notify(SCP_EVENT_STOP);
+#if IS_ENABLED(CONFIG_MTK_AEE_FEATURE)
 	if (scp_reset_type == RESET_TYPE_WDT)
 		scp_show_last_regs();
+#endif
 	/*
 	 *   scp_ready:
 	 *   SCP_PLATFORM_STOP  = 0,
@@ -1914,10 +1920,12 @@ void scp_sys_reset_ws(struct work_struct *ws)
 	/* print_clk and scp_aed before pll enable to keep ori CLK_SEL */
 	print_clk_registers();
 	/*workqueue for scp ee, scp reset by cmd will not trigger scp ee*/
+#if IS_ENABLED(CONFIG_MTK_AEE_FEATURE)
 	if (scp_reset_by_cmd == 0) {
 		pr_debug("[SCP] %s(): scp_aed_reset\n", __func__);
 		scp_aed(scp_reset_type, SCP_A_ID);
 	}
+#endif
 	pr_debug("[SCP] %s(): disable logger\n", __func__);
 	/* logger disable must after scp_aed() */
 	scp_logger_init_set(0);

@@ -35,7 +35,9 @@ struct name_list {
 
 extern int register_hang_callback(void (*function_addr)(void));
 extern int unregister_hang_callback(void (*function_addr)(void));
+#if IS_ENABLED(CONFIG_MTK_AEE_IPANIC)
 extern void mrdump_regist_hang_bt(void (*fn)(void));
+#endif
 
 #ifdef CONFIG_MTK_HANG_DETECT_LOG
 #define hang_log pr_info

@@ -38,7 +38,9 @@
 #endif
 
 struct scp_dump_st {
+#if IS_ENABLED(CONFIG_MTK_AEE_FEATURE)
 	uint8_t *detail_buff;
+#endif
 	uint8_t *ramdump;
 	uint32_t ramdump_length;
 	/* use prefix to get size or offset in O(1) to save memory */
@@ -96,10 +98,12 @@ static uint32_t get_MDUMP_size_accumulate(MDUMP_t type)
 	return scp_dump.prefix[type];
 }
 
+#if IS_ENABLED(CONFIG_MTK_AEE_FEATURE)
 static uint8_t* get_MDUMP_addr(MDUMP_t type)
 {
 	return (uint8_t*)(scp_dump.ramdump + scp_dump.prefix[type - 1]);
 }
+#endif
 
 uint32_t memorydump_size_probe(struct platform_device *pdev)
 {
@@ -116,6 +120,7 @@ uint32_t memorydump_size_probe(struct platform_device *pdev)
 	return 0;
 }
 
+#if IS_ENABLED(CONFIG_MTK_AEE_FEATURE)
 void scp_dump_last_regs(void)
 {
 	c0_m->status = readl(R_CORE0_STATUS);
@@ -251,6 +256,7 @@ void scp_show_bus_tracker_status(void)
 				bus_tracker->dbg_w[offset + 7]);
 		}
 }
+#endif
 
 void scp_do_regdump(uint32_t *out, uint32_t *out_end)
 {
@@ -406,6 +412,7 @@ void scp_do_tbufdump_RV55(uint32_t *out, uint32_t *out_end)
 	}
 }
 
+#if IS_ENABLED(CONFIG_MTK_AEE_FEATURE)
 /*
  * this function need SCP to keeping awaken
  * scp_crash_dump: dump scp tcm info.
@@ -743,8 +750,7 @@ void scp_aed(enum SCP_RESET_TYPE type, enum scp_core_id id)
 	pr_debug("[SCP] scp exception dump is done\n");
 
 }
-
-
+#endif
 
 static ssize_t scp_A_dump_show(struct file *filep,
 		struct kobject *kobj, struct bin_attribute *attr,
@@ -809,9 +815,11 @@ int scp_excep_init(void)
 		reg_save_list[i].addr |= scp_reg_base_phy;
 
 	/* alloc dump memory */
+#if IS_ENABLED(CONFIG_MTK_AEE_FEATURE)
 	scp_dump.detail_buff = vmalloc(SCP_AED_STR_LEN);
 	if (!scp_dump.detail_buff)
 		return -1;
+#endif
 
 	/* support L1C or not? */
 	if ((int)(scp_region_info->ap_dram_size) > 0)
@@ -888,7 +896,9 @@ void scp_ram_dump_init(void)
  */
 void scp_excep_cleanup(void)
 {
+#if IS_ENABLED(CONFIG_MTK_AEE_FEATURE)
 	vfree(scp_dump.detail_buff);
+#endif
 #if SCP_RESERVED_MEM && IS_ENABLED(CONFIG_OF_RESERVED_MEM)
 	if (scpreg.secure_dump) {
 		scp_dump.ramdump = NULL;

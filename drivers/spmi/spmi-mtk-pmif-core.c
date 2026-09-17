@@ -990,8 +990,9 @@ static irqreturn_t spmi_nack_irq_handler(int irq, void *data)
 
 	if (flag) {
 		/* trigger AEE event*/
-		if (IS_ENABLED(CONFIG_MTK_AEE_FEATURE))
-			aee_kernel_warning("SPMI", "SPMI:transaction_fail");
+#if IS_ENABLED(CONFIG_MTK_AEE_FEATURE)
+		aee_kernel_warning("SPMI", "SPMI:transaction_fail");
+#endif
 	}
 
 	/* clear irq*/
