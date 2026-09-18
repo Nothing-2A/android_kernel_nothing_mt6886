@@ -420,7 +420,9 @@ static const u8 *mphy_str[] = {
 static struct ufs_hba *g_hba_ptr = NULL;
 #endif
 
+#if IS_ENABLED(CONFIG_MTK_IRQ_DBG)
 extern void mt_irq_dump_status(unsigned int irq);
+#endif
 static int ufs_mtk_auto_hibern8_disable(struct ufs_hba *hba);
 
 
@@ -3084,8 +3086,11 @@ static int ufs_mtk_unipro_set_lpm(struct ufs_hba *hba, bool lpm)
 	if (ret) {
 		int ret2, val = 0;
 
+
+#if IS_ENABLED(CONFIG_MTK_IRQ_DBG)
 		/* maybe irq pending */
 		mt_irq_dump_status(hba->irq);
+#endif
 
 		ret2 = ufshcd_dme_get(hba,
 			UIC_ARG_MIB(VS_UNIPROPOWERDOWNCONTROL), &val);
@@ -3440,7 +3445,9 @@ static void ufs_mtk_dbg_register_dump(struct ufs_hba *hba)
 	s64 delta_msecs;
 #endif
 
+#if IS_ENABLED(CONFIG_MTK_IRQ_DBG)
 	mt_irq_dump_status(hba->irq);
+#endif
 
 	ufshcd_dump_regs(hba, 0, REG_INTERRUPT_STATUS, "Intr. Status (0x0):");
 

@@ -242,9 +242,10 @@ extern struct tasklet_struct vcp_A_irq1_tasklet;
 #if IS_ENABLED(CONFIG_MTK_GIC_V3_EXT)
 extern u32 mt_irq_get_pending(unsigned int irq);
 #endif
+#if IS_ENABLED(CONFIG_MTK_IRQ_DBG)
 void dump_vcp_irq_status(void);
 extern void mt_irq_dump_status(int irq);
-
+#endif
 
 
 /*extern vcp notify*/

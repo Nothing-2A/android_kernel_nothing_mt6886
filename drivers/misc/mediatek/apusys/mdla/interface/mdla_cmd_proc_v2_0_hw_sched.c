@@ -10,7 +10,7 @@
 
 #if IS_ENABLED(CONFIG_MTK_GIC_V3_EXT)
 #include <linux/irqchip/mtk-gic-extend.h>
-#else
+#elif IS_ENABLED(CONFIG_MTK_IRQ_DBG)
 #define mt_irq_dump_status(n)
 #endif
 
@@ -151,7 +151,9 @@ static int mdla_cmd_wrong_count_handler(struct mdla_dev *mdla_info,
 
 	/* handle command timeout */
 	mdla_cmd_plat_cb()->post_cmd_hw_detect(core_id);
+#if IS_ENABLED(CONFIG_MTK_IRQ_DBG)
 	mt_irq_dump_status(mdla_cmd_plat_cb()->get_irq_num(core_id));
+#endif
 	mdla_dbg_dump(mdla_info, ce);
 	/* Enable & Relase bus protect */
 	mdla_pwr_ops_get()->switch_off_on(core_id);

@@ -536,7 +536,9 @@ extern int regmap_read(struct regmap *map,
 
 extern void ccmni_clr_flush_timer(void);
 
+#if IS_ENABLED(CONFIG_MTK_IRQ_DBG)
 extern void mt_irq_dump_status(unsigned int irq);
+#endif
 
 extern void ccmni_set_tcp_is_need_gro(u32 tcp_is_need_gro);
 extern void ccmni_set_cur_speed(u64 cur_dl_speed);
